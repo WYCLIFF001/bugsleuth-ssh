@@ -1,0 +1,48 @@
+[package]
+name = "bugsleuth-ssh"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# Async runtime - monoio with io_uring
+monoio = { version = "0.2.4", features = ["sync", "bytes"] }
+
+# Crypto
+chacha20poly1305 = "0.10.1"
+
+# Database (control plane only)
+rusqlite = { version = "0.38.0", features = ["bundled"] }
+
+# Serialization
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+
+# Utilities
+bytes = "1.11.0"
+thiserror = "2.0.17"
+anyhow = "1.0.100"
+parking_lot = "0.12.5"
+
+# Logging
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+x25519-dalek = "2.0.1"
+rand_core = { version = "0.6.4", features = ["getrandom"] }
+rand = "0.8.5"
+chrono = "0.4.42"
+aes = "0.8.4"
+ctr = "0.9.2"
+hmac = "0.12.1"
+sha1 = "0.10.6"
+sha2 = "0.10.9"
+num-bigint = "0.4.6"
+rsa = "0.9.10"
+base64 = "0.22.1"
+
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
