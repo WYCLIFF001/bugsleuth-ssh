@@ -90,3 +90,46 @@ pub fn load_enabled_users(path: &Path) -> Result<Vec<DbUser>> {
 
     Ok(users)
 }
+
+/// Create or update test user with auto-generated password
+pub fn ensure_test_user(path: &Path) -> Result<(String, String)> {
+    let conn = Connection::open(path)
+        .context("Failed to open database")?;
+
+    let username = "test".to_string();
+    
+    // Generate a secure random password (32 characters, alphanumeric + special)
+    let password = generate_secure_password(32);
+    
+    // Set expiry to 1 year from now
+    let expiry_date = chrono::Utc::now()
+        .checked_add_signed(chrono::Duration::days(365))
+        .unwrap_or_else(|| chrono::Utc::now() + chrono::Duration::days(365))
+        .format("%Y-%m-%d %H:%M:%S")
+        .to_string();
+    
+    let created_date = chrono::Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
+    let max_logins = 5;
+
+    // Use INSERT OR REPLACE to update if exists
+    conn.execute(
+        "INSERT OR REPLACE INTO ssh (username, password, created_date, expiry_date, max_logins)
+         VALUES (?1, ?2, ?3, ?4, ?5)",
+        rusqlite::params![username, password, created_date, expiry_date, max_logins],
+    ).context("Failed to create/update test user")?;
+
+    Ok((username, password))
+}
+
+/// Generate a secure random password
+fn generate_secure_password(length: usize) -> String {
+    use rand::Rng;
+    const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+    let mut rng = rand::thread_rng();
+    (0..length)
+        .map(|_| {
+            let idx = rng.gen_range(0..CHARSET.len());
+            CHARSET[idx] as char
+        })
+        .collect()
+}

@@ -6,8 +6,8 @@ use super::cipher_state::CipherState;
 
 /// SSH packet codec
 pub struct SshPacketCodec {
-    encrypt: Option<CipherState>,
-    decrypt: Option<CipherState>,
+    pub(crate) encrypt: Option<CipherState>,
+    pub(crate) decrypt: Option<CipherState>,
     block_size: usize,
 }
 

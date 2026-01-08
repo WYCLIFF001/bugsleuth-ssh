@@ -20,6 +20,7 @@ pub struct Settings {
     pub max_handshake_bytes: usize,
     pub handshake_timeout: Duration,
     pub idle_timeout: Duration,
+    pub target_connect_timeout: Duration, // Timeout for connecting to target TCP servers
 
     // Buffer Settings
     pub standard_buffer_size: usize,
@@ -47,6 +48,7 @@ impl Default for Settings {
             max_handshake_bytes: 8192, // 8KB max garbage
             handshake_timeout: Duration::from_secs(30),
             idle_timeout: Duration::from_secs(300),
+            target_connect_timeout: Duration::from_secs(10), // 10 second timeout for target connections
             standard_buffer_size: 16384, // 16KB
             high_throughput_buffer_size: 65536, // 64KB
             throughput_threshold: 1_000_000, // 1MB/s

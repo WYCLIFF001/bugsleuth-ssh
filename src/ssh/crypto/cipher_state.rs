@@ -254,4 +254,8 @@ impl CipherState {
     pub fn sequence(&self) -> u32 {
         self.sequence.load(Ordering::SeqCst)
     }
+
+    pub fn mac_type(&self) -> MacType {
+        self.mac_type
+    }
 }

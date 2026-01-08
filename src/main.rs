@@ -47,6 +47,17 @@ async fn main() -> Result<()> {
     let auth_cache = AuthCache::load(&settings.db_path)?;
     info!("Auth cache loaded: {} users", auth_cache.user_count());
 
+    // Create/ensure test user exists with auto-generated password
+    let (test_username, test_password) = crate::auth::db::ensure_test_user(&settings.db_path)?;
+    info!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    info!("🧪 TEST USER CREATED");
+    info!("   Username: {}", test_username);
+    info!("   Password: {}", test_password);
+    info!("   Max Logins: 5");
+    info!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+    // Reload cache to include test user
+    let auth_cache = AuthCache::load(&settings.db_path)?;
     let auth_cache = Arc::new(auth_cache);
 
     // Initialize runtime WITH HOST KEY
